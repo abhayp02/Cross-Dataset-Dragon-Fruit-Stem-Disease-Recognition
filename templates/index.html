@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dragon Fruit Stem Analysis</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="logo" aria-hidden="true">♧</span><span>Dragon Fruit Stem Analysis</span><span class="badge">Research prototype</span></div>
+  <nav aria-label="Main navigation">
+    <button class="nav active" data-page="predict" aria-current="page">Predict</button>
+    <button class="nav" data-page="comparison">Model Comparison</button>
+    <button class="nav" data-page="about">About</button>
+  </nav>
+</header>
+<main>
+  <div id="global-error" class="error" role="alert" hidden></div>
+  <section id="predict" class="page">
+    <div class="heading"><p class="eyebrow">FROM IMAGE TO INSIGHT</p><h1>Analyze a stem image</h1><p>Upload a clear image to explore your trained CNN's prediction.</p></div>
+    <div class="selection">
+      <label>Model<select id="architecture" aria-label="Prediction model"></select></label>
+      <label>Experiment<select id="experiment" aria-label="Prediction experiment"></select></label>
+      <div class="local-status"><span class="dot"></span> Runs locally on your laptop</div>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="card-title"><h2>Stem image</h2><span class="quiet">JPG · PNG · WebP</span></div>
+        <div class="image-area" id="drop-zone">
+          <div id="upload-placeholder"><span class="upload-icon" aria-hidden="true">↥</span><h3>A closer look at your plant</h3><p>Drop a stem image here<br>or use Choose image below</p><small>Up to 12 MB · 20 megapixels</small></div>
+          <img id="preview" alt="Selected stem image" hidden>
+        </div>
+        <p id="filename" class="filename">No image selected</p>
+        <input id="file" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+        <div class="actions"><button id="choose" class="button secondary">Choose image</button><button id="analyze" class="button primary" disabled>Analyze image</button></div>
+        <div id="prediction-error" class="error" role="alert" hidden></div>
+      </article>
+      <article class="card results" aria-live="polite" aria-busy="false">
+        <div class="card-title"><h2>Prediction</h2><span id="result-badge" class="badge">Ready when you are</span></div>
+        <div id="empty-result" class="empty-result"><div class="leaf-mark" aria-hidden="true">♧</div><h3>Every image tells a story</h3><p>Select an image and choose Analyze image.<br>Your model's class scores will appear here.</p></div>
+        <div id="result" hidden><div class="prediction-highlight"><p class="eyebrow">PREDICTED CLASS</p><h2 id="predicted-class"></h2><p>Model score</p><strong id="top-score"></strong></div><div id="scores"></div><p id="result-context" class="quiet"></p></div>
+        <p class="result-note">Model scores are not diagnostic certainty. The model always chooses from its known classes; it cannot verify that an image is a dragon fruit stem.</p>
+      </article>
+    </div>
+    <div class="details"><span id="model-detail"></span><span id="task-detail"></span><span id="dataset-detail"></span></div>
+    <p id="class-list" class="quiet supported"></p>
+  </section>
+  <section id="comparison" class="page" hidden>
+    <div class="heading"><p class="eyebrow">YOUR EXPERIMENTS</p><h1>Compare the CNN models</h1><p>Saved test results, grouped by the same task and dataset.</p></div>
+    <div class="selection"><label>Experiment<select id="compare-experiment" aria-label="Comparison experiment"></select></label><button id="download" class="button secondary">Download results CSV</button></div>
+    <div class="card"><div class="card-title"><h2>Test performance</h2><span class="badge">Saved results</span></div><p id="test-context" class="quiet"></p><div class="table-scroll"><table><thead><tr><th>Model</th><th>Accuracy</th><th>Macro F1</th><th>Precision (macro)</th><th>Recall (macro)</th><th>Test images</th></tr></thead><tbody id="comparison-rows"></tbody></table></div></div>
+    <div class="card comparison-detail"><div class="card-title"><h2>Look inside the results</h2><label>Model<select id="detail-model" aria-label="Detailed results model"></select></label></div><div id="sample-counts" class="quiet"></div><h3>Per-class performance</h3><div class="table-scroll"><table><thead><tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Test images</th></tr></thead><tbody id="class-rows"></tbody></table></div><h3>Confusion matrix</h3><p class="quiet">Rows = actual class · Columns = predicted class · Values = image counts</p><div class="table-scroll" id="confusion"></div></div>
+    <p class="notice">These are recorded single-run results. Small test sets and possible related images can affect scores. A 100% result does not establish perfect real-world performance. Cross-dataset experiments recognize only Healthy and Stem Canker.</p>
+  </section>
+  <section id="about" class="page" hidden>
+    <div class="heading"><p class="eyebrow">THE RESEARCH</p><h1>From stem patterns to predictions</h1><p>A local application for exploring dragon fruit stem disease classification.</p></div>
+    <div class="grid"><article class="card prose"><h2>What the CNN does</h2><p>MobileNetV3 Small, EfficientNet-B0, and ResNet18 are convolutional neural networks. They learn patterns such as texture, colour, and lesion shapes from labelled training images.</p><p>This app loads your trained checkpoint, prepares the uploaded image using the evaluation resize, crop, and normalization, and displays its predicted class and softmax scores.</p><h3>Your workflow</h3><ol><li>Select the model and experiment.</li><li>Upload a clear photograph of a stem.</li><li>Analyze the image and inspect all class scores.</li><li>Explore the saved test metrics in Model Comparison.</li></ol></article><article class="card prose"><h2>Understand the datasets</h2><p><b>A — MultiOrgan, stem only:</b> Healthy, Rust, Scab, Stem Canker, and Sunburn.</p><p><b>B — Common stem disease:</b> Anthracnose, Cactus Virus X, Healthy, and Stem Canker.</p><p><b>C — Pitahaya stem disease:</b> Anthracnose, Brown Stem Spot, Gray Blight, Healthy, Soft Rot, and Stem Canker.</p><p>Multiclass experiments use each dataset's own training, validation, and test splits. Binary experiments train on A, B, or A + B and evaluate the shared Healthy / Stem Canker classes in C.</p></article></div>
+    <article class="card prose about-footer"><h2>Research scope and privacy</h2><p>Uploaded images are processed in memory on this laptop and are not saved by the app. Inference runs on the CPU and does not require your friend's GPU or an internet connection after setup.</p><p>The app cannot detect every disease, reject all unrelated images, or provide a confirmed diagnosis. Scores are uncalibrated model outputs. Dataset independence, label consistency, related-image leakage, and performance across repeated runs still require research review.</p></article>
+  </section>
+</main>
+<footer>Dragon Fruit Stem Analysis <span>Local inference · Research prototype</span></footer>
+<noscript>This app requires JavaScript to upload images and display predictions.</noscript>
+</body></html>
