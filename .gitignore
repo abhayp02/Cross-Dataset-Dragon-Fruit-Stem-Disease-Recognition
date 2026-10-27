@@ -2,6 +2,8 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+tmp/
+output/
 data/*
 model/*
 !data/.gitkeep
