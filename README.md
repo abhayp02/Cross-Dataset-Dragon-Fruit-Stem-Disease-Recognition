@@ -77,6 +77,16 @@ compatibility, related-image leakage and dataset independence, and quantify
 uncertainty with appropriate repeated runs or intervals. Perfect scores on a
 small test set do not imply perfect performance in the field.
 
+## Presentation graphs
+
+Figures for slides and papers are in `reports/presentation_graphs/`, with a short
+explanation of each chart. To regenerate them from the saved experiment results:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-plots.txt
+.\.venv\Scripts\python.exe src\create_presentation_graphs.py
+```
+
 ## Checks
 
 ```powershell
